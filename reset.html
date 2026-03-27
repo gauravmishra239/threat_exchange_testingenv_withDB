@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Threat Exchange — Reset Password</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{min-height:100vh;background:#000;display:flex;align-items:center;justify-content:center;font-family:'Outfit',system-ui,sans-serif;color:rgba(255,255,255,.9);padding:20px;}
+.box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;width:100%;max-width:400px;padding:32px;}
+.logo{font-size:18px;font-weight:700;color:#fff;margin-bottom:24px;letter-spacing:-.3px;}
+.title{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;}
+.sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:24px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.inp{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.9);font-size:14px;padding:11px 14px;outline:none;border-radius:6px;transition:all .2s;font-family:inherit;}
+.inp:focus{border-color:rgba(200,16,46,.7);box-shadow:0 0 0 3px rgba(200,16,46,.12);}
+.cta{width:100%;background:#c8102e;border:none;color:white;font-size:14px;font-weight:600;padding:13px;cursor:pointer;border-radius:6px;margin-top:4px;font-family:inherit;}
+.cta:hover{background:#e8132d;}
+.al{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:14px;display:none;align-items:center;gap:8px;}
+.al.show{display:flex;}
+.al-err{background:rgba(200,16,46,.1);color:#ff6b7a;border:1px solid rgba(200,16,46,.3);}
+.al-ok{background:rgba(22,163,74,.1);color:#4ade80;border:1px solid rgba(22,163,74,.3);}
+.back{text-align:center;margin-top:16px;font-size:13px;color:rgba(255,255,255,.4);}
+.back a{color:#ff4d6d;cursor:pointer;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="box">
+  <div class="logo">Threat Exchange</div>
+  <div class="title">Set new password</div>
+  <div class="sub">Enter and confirm your new password below</div>
+  <div class="al al-err" id="err"></div>
+  <div class="al al-ok" id="ok"></div>
+  <div class="field"><label>New Password</label><input class="inp" type="password" id="pw" placeholder="Min. 8 characters"/></div>
+  <div class="field"><label>Confirm Password</label><input class="inp" type="password" id="pw2" placeholder="Repeat new password" onkeydown="if(event.key==='Enter')doReset()"/></div>
+  <button class="cta" onclick="doReset()">Update Password</button>
+  <div class="back"><a href="login.html">← Back to sign in</a></div>
+</div>
+<script>
+const SB = supabase.createClient('https://cajurvulvmbuymjqakhf.supabase.co','sb_publishable_a_3FPAauxe4hpa4POTBGAA_lggUfCVG');
+async function doReset(){
+  const pw=document.getElementById('pw').value, pw2=document.getElementById('pw2').value;
+  const err=document.getElementById('err'), ok=document.getElementById('ok');
+  err.className='al al-err'; ok.className='al al-ok';
+  if(pw.length<8){err.textContent='Password must be at least 8 characters';err.classList.add('show');return;}
+  if(pw!==pw2){err.textContent='Passwords do not match';err.classList.add('show');return;}
+  const{error}=await SB.auth.updateUser({password:pw});
+  if(error){err.textContent=error.message;err.classList.add('show');return;}
+  ok.textContent='Password updated! Redirecting…';ok.classList.add('show');
+  setTimeout(()=>location.href='dashboard.html',1500);
+}
+</script>
+</body>
+</html>
